@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Stopwatch</title>
+  <style>
+    :root {
+      --bg-color: #1f1c2c;
+      --gradient: linear-gradient(135deg, #1f1c2c, #928dab);
+      --text-color: red;
+      --panel-bg: rgba(0, 0, 0, 0.5);
+    }
+
+    body.light-mode {
+      --bg-color: #f5f5f5;
+      --gradient: linear-gradient(135deg, #e0eafc, #cfdef3);
+      --text-color: blue;
+      --panel-bg: rgba(255, 255, 255, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--gradient);
+      color: var(--text-color);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      padding: 10px 20px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    header h2 {
+      font-size: 20px;
+    }
+
+    nav a {
+      color: #00e5ff;
+      margin: 0 12px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #fff176;
+    }
+
+    .container {
+      margin-top: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    #home {
+      background-image: url('https://img.freepik.com/premium-photo/male-hand-hold-analog-stopwatch-black-background-close-up-isolate-copy-space_94132-223.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      padding: 60px 20px;
+    }
+
+    .stopwatch-box {
+      background: var(--panel-bg);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.4),
+        0 0 30px rgba(255, 0, 255, 0.3),
+        0 0 40px rgba(255, 255, 0, 0.2),
+        0 0 50px rgba(0, 255, 0, 0.3);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #message {
+      min-height: 24px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    #display {
+      font-size: 44px;
+      background: white;
+      color: blue;
+      font-family: monospace;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin: 15px 0;
+      display: inline-block;
+    }
+
+    .buttons button {
+      padding: 12px 20px;
+      margin: 6px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: white;
+      color: blue;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .buttons button:hover {
+      background: violet;
+      transform: scale(1.05);
+    }
+
+    .buttons button:active {
+      transform: scale(0.95);
+    }
+
+    .mode-toggle {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: 1px solid pink;
+      border-radius: 6px;
+      cursor: pointer;
+      background: transparent;
+      font-size: 14px;
+      color: white;
+    }
+
+    #laps {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      list-style: none;
+      padding: 0;
+    }
+
+    #laps li {
+      background: white;
+      margin: 6px 0;
+      padding: 8px 14px;
+      border-radius: 6px;
+      color: black;
+      font-family: monospace;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    #about, #features {
+      color: black;
+    }
+
+    @media (max-width: 500px) {
+      #display {
+        font-size: 32px;
+      }
+      .buttons button {
+        font-size: 13px;
+        padding: 10px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>My Stopwatch</h2>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+    </nav>
+  </header>
+
+  <div id="home" class="container">
+    <div class="stopwatch-box">
+      <h1 style="color: red">⏱ STOPWATCH</h1>
+      <div id="message"></div>
+      <div id="display">00:00:00.000</div>
+      <div class="buttons">
+        <button id="startPauseBtn" onclick="startPause()">Start</button>
+        <button onclick="reset()">Reset</button>
+        <button onclick="recordLap()">Lap</button>
+      </div>
+      <ul id="laps"></ul>
+      <button class="mode-toggle" onclick="toggleMode()">Toggle Light/Dark Mode</button>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="container">
+      <div class="stopwatch-box">
+        <h1>About</h1>
+        <p>This is an interactive stopwatch designed to enhance your time tracking experience with modern features.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <div class="stopwatch-box">
+        <h1>Features</h1>
+        <ul>
+          <li>Displays time in hours, minutes, seconds, and milliseconds.</li>
+          <li>Records lap times and displays lap differences.</li>
+          <li>Light and dark mode toggle.</li>
+          <li>Responsive design for all screen sizes.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let [ms, seconds, minutes, hours] = [0, 0, 0, 0];
+    let timer = null;
+    let isRunning = false;
+    let lapCount = 0;
+    let lastLapMS = 0;
+
+    const display = document.getElementById("display");
+    const startPauseBtn = document.getElementById("startPauseBtn");
+    const lapsList = document.getElementById("laps");
+    const message = document.getElementById("message");
+
+    function getTotalMilliseconds() {
+      return hours * 3600000 + minutes * 60000 + seconds * 1000 + ms;
+    }
+
+    function formatTime(totalMS) {
+      const h = Math.floor(totalMS / 3600000).toString().padStart(2, '0');
+      const m = Math.floor((totalMS % 3600000) / 60000).toString().padStart(2, '0');
+      const s = Math.floor((totalMS % 60000) / 1000).toString().padStart(2, '0');
+      const milli = (totalMS % 1000).toString().padStart(3, '0');
+      return `${h}:${m}:${s}.${milli}`;
+    }
+
+    function updateDisplay() {
+      display.textContent = formatTime(getTotalMilliseconds());
+    }
+
+    function stopwatch() {
+      ms += 10;
+      if (ms >= 1000) {
+        ms = 0;
+        seconds++;
+        if (seconds === 60) {
+          seconds = 0;
+          minutes++;
+          if (minutes === 60) {
+            minutes = 0;
+            hours++;
+          }
+        }
+      }
+      updateDisplay();
+    }
+
+    function showMessage(text, color = "#f44336") {
+      message.textContent = text;
+      message.style.color = color;
+    }
+
+    function startPause() {
+      if (!isRunning) {
+        timer = setInterval(stopwatch, 10);
+        isRunning = true;
+        startPauseBtn.textContent = "Pause";
+        startPauseBtn.style.backgroundColor = "#f44336";
+        showMessage("Stopwatch running...", "#00e676");
+      } else {
+        clearInterval(timer);
+        isRunning = false;
+        startPauseBtn.textContent = "Start";
+        startPauseBtn.style.backgroundColor = "#00bcd4";
+        showMessage("Paused", "#ffca28");
+      }
+    }
+
+    function reset() {
+      clearInterval(timer);
+      [ms, seconds, minutes, hours] = [0, 0, 0, 0];
+      isRunning = false;
+      lapCount = 0;
+      lastLapMS = 0;
+      updateDisplay();
+      startPauseBtn.textContent = "Start";
+      startPauseBtn.style.backgroundColor = "#00bcd4";
+      lapsList.innerHTML = "";
+      showMessage("Reset done", "#e57373");
+    }
+
+    function recordLap() {
+      if (!isRunning) {
+        showMessage("Start stopwatch first", "#ffcc80");
+        return;
+      }
+
+      lapCount++;
+      const currentMS = getTotalMilliseconds();
+      const diff = currentMS - lastLapMS;
+      const lapTime = formatTime(currentMS);
+      const diffTime = formatTime(diff);
+      lastLapMS = currentMS;
+
+      const li = document.createElement("li");
+      li.textContent = `Lap ${lapCount}: ${lapTime} (+${diffTime})`;
+      lapsList.appendChild(li);
+      lapsList.scrollTop = lapsList.scrollHeight;
+
+      showMessage(`Lap ${lapCount} recorded`, "#64b5f6");
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle("light-mode");
+    }
+  </script>
+</body>
+</html>
